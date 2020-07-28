@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2020_07_28_180637) do
 
   create_table "artworks", force: :cascade do |t|
+    t.integer "artwork_met_id"
     t.string "artwork_title"
     t.string "artwork_image"
     t.string "artist_name"
