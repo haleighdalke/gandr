@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  artwork_title: MyString
+  artwork_image: MyString
+  artist_name: MyString
+  artist_nationality: MyString
+  artist_gender: MyString
+  artwork_date: MyString
+  artwork_classification: MyString
+
+two:
+  artwork_title: MyString
+  artwork_image: MyString
+  artist_name: MyString
+  artist_nationality: MyString
+  artist_gender: MyString
+  artwork_date: MyString
+  artwork_classification: MyString
