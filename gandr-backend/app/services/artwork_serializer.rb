@@ -1,15 +1,6 @@
 class ArtworkSerializer
-
-    def initialize(artwork_object)
-        @artwork = artwork_object
-    end
-     
-    def to_serialized_json
-        # What do we need to include?
-        options = {
-            include: [:artworks]
-        }
-        @artwork.to_json(options)
-    end
+    include FastJsonapi::ObjectSerializer
+    
+    attributes :artwork_met_id, :artwork_title, :artwork_image, :artist_name, :artist_nationality, :artist_gender, :artwork_date, :artwork_classification
 
 end
