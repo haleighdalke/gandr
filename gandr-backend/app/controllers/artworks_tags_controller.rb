@@ -1,0 +1,2 @@
+class ArtworksTagsController < ApplicationController
+end
