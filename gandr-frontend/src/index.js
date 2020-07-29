@@ -72,7 +72,7 @@ const renderArtCard = (artwork) => {
         </div>
         <div class="card-footer">
             <a href="#" class="btn btn-danger" id="like-button">♥</a>
-            <a href="#" class="btn btn-primary">Comment</a>
+            <a href="#" class="btn btn-primary" id="post-comment-button">Comment</a>
         </div>
         </div>
 
@@ -80,6 +80,41 @@ const renderArtCard = (artwork) => {
     div.prepend(artCard)
     
     let likeButton = artCard.querySelector("#like-button")
-    likeButton.addEventListener('click', (e) => likeArtwork(e, artwork))
-    // debugger
+    likeButton.addEventListener('click', (e) => likeArtwork(e, artwork)) 
+
+    let likeButton = artCard.querySelector("#like-button")
+    likeButton.addEventListener('click', (e) => likeArtwork(e, artwork)) 
+}
+
+const likeArtwork = (e, artwork) => {
+    let data = {
+        artwork_id: artwork.id,
+        // Need to identify user
+        user_id: user.id
+    }
+    fetch(`http://localhost:3000/likes`,{
+        method: 'POST',
+        headers: {
+        'Content-Type':'application/json',
+        },
+        body: JSON.stringify(data)
+        })
+        .then(res => res.json()) 
+}
+
+const postComment = (e, artwork) => {
+    let data = {
+        artwork_id: artwork.id,
+        // Need to identify user
+        user_id: user.id
+        // Add content
+    }
+    fetch(`http://localhost:3000/comments`,{
+        method: 'POST',
+        headers: {
+        'Content-Type':'application/json',
+        },
+        body: JSON.stringify(data)
+        })
+        .then(res => res.json()) 
 }
