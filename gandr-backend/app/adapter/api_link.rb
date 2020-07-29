@@ -21,3 +21,4 @@ class ApiLink
         end
         artwork.save
     end
+end
