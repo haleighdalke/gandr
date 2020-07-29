@@ -9,7 +9,7 @@ require 'faker'
 include Faker
 
 # Artwork Seed Data
-ApiLink.get_data("sunflowers")
+ApiLink.get_data("butterflies")
 
 # User Seed Data
 # User.create(username: "haleigh_d" y7)
