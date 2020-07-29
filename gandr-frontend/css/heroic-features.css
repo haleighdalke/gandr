@@ -69,3 +69,17 @@ a.btn.btn-primary {
   background-color: #66a3ff;
   border-color: #66a3ff;
 }
+
+#logo {
+  height: 70px;
+}
+#landing {
+  padding: 100px;
+  text-align: center;
+  background-color: rgb(219, 219, 219);
+  opacity: 0.9;
+}
+
+#home {
+  display: none;
+}
