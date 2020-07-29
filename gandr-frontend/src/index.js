@@ -9,12 +9,8 @@
 
 document.addEventListener('DOMContentLoaded', (e) => {    
     
-    let success = login()
-    while (!success) {
-        success = login()
-        return success
-    }
-    
+    // while loop?
+    let success = login()    
 })
 
 const login = () => {
@@ -22,10 +18,12 @@ const login = () => {
     let loginForm = document.getElementById("login-form")
     loginForm.addEventListener('submit', (e) => {
         // validate username and transition
-        fetch('')
+        debugger
+        fetch('http://localhost:3000/users')
         .then(res => res.json())
         .then(json => {
             json.forEach(user => {
+                debugger
                 if (user.username === e.target[0].value){
                     let landingDiv = document.getElementById("landing")
                     landingDiv.remove()
