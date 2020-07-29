@@ -6,7 +6,11 @@
 body {
   padding-top: 56px;
   background-image: url('../images/rothko_grey.jpg');
+  font-family: 'Raleway', sans-serif;
+}
 
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'Julius Sans One', sans-serif;
 }
 
 
@@ -19,10 +23,6 @@ body {
   text-align: center;
   background-color: rgb(219, 219, 219);
   opacity: 0.9;
-}
-
-#inner-landing{
-  
 }
 
 #home {
