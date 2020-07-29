@@ -12,4 +12,26 @@ class UsersController < ApplicationController
         render json: UserSerializer.new(users).to_serialized_json
     end
 
+    def new 
+        user = User.new
+    end
+
+    def create
+        @user = User.new(username: params["username"])
+        if @user.save
+            ## what do we want to show?
+            render json: UserSerializer.new(user).to_serialized_json
+        else 
+            flash[:message] = @user.errors.full_messages
+            ## what do we want to show?
+            render json: UserSerializer.new(user).to_serialized_json
+        end
+    end
+
+    def destroy
+        user = User.find_by(id: params[:id])
+        user.delete
+        render json: UserSerializer.new(user).to_serialized_json
+    end
+
 end
