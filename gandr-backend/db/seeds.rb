@@ -1,6 +1,6 @@
 require './app/adapter/api_link.rb'
 
-# Artwork.destroy_all
+Artwork.destroy_all
 # User.destroy_all
 # Comment.destroy_all
 # Like.destroy_all
@@ -9,7 +9,7 @@ require 'faker'
 include Faker
 
 # Artwork Seed Data
-# ApiLink.get_data("sunflowers")
+ApiLink.get_data("sunflowers")
 
 # User Seed Data
 # User.create(username: "haleigh_d")
