@@ -18,7 +18,6 @@ const login = () => {
     let loginForm = document.getElementById("login-form")
     loginForm.addEventListener('submit', (e) => {
         // validate username and transition
-        debugger
         fetch('http://localhost:3000/users')
         .then(res => res.json())
         .then(json => {
