@@ -5,6 +5,7 @@
  */
 body {
   padding-top: 56px;
+  background-image: url('../images/rothko_grey.jpg');
 }
 div #navigation img{
   max-width: 100%;

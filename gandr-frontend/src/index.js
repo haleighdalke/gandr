@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
             <img class="card-img-top" src="${artwork.artwork_image}" alt="">
             <div class="card-body">
                 <h4 class="card-title">${artwork.artwork_title}</h4>
-                <p class="card-text">Created by ${artwork.artist_name} from ${artwork.artist_nationality} in ${artwork.artwork_date}</p>
+                <p class="card-text">Created by ${artwork.artist_name}, ${artwork.artist_nationality}, in ${artwork.artwork_date}</p>
             </div>
             <div class="card-footer">
                 <a href="#" class="btn btn-danger">♥</a>
