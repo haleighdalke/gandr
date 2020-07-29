@@ -9,10 +9,10 @@ require 'faker'
 include Faker
 
 # Artwork Seed Data
-ApiLink.get_data("sunflowers")
+ApiLink.get_data("puppies")
 
 # User Seed Data
-# User.create(username: "haleigh_d")
+# User.create(username: "haleigh_d" y7)
 # User.create(username: "iona_b")
 # 50.times do
 #     User.create(username: Faker::Name.first_name.downcase)
