@@ -1,12 +1,3 @@
-
-
-// ** Nav item highlighted **
-// <li class="nav-item active">
-// <a class="nav-link" href="#">Home
-//   <span class="sr-only">(current)</span>
-// </a>
-// </li>
-
 document.addEventListener('DOMContentLoaded', (e) => {    
     
     let success = false
@@ -86,9 +77,24 @@ const login = () => {
 }
 
 const renderHomePage = (user) => {
+
+    // update page
     let homeDiv = document.getElementById("home")
     homeDiv.style.display = "block"
-    // get all artwork and render home page once loaded from database
+
+    let header = document.querySelector("header")
+    h1 = header.querySelector("h1")
+    h1.innerText = `Welcome to Gandr, ${user.username}!`
+
+    fetchAllArtworks(user)
+    
+    // once page has loaded completely, add navbar event listeners
+    navBarEventListeners(user)
+    
+}
+
+const fetchAllArtworks = (user) => {
+    // add artwork cards from DB
     fetch('http://localhost:3000/artworks')
     .then(res => res.json())
     .then(json => {
@@ -105,6 +111,97 @@ const renderHomePage = (user) => {
     })
 }
 
+const navBarEventListeners = (user) => {
+    let viewAll = document.getElementById("nav-item-view-all")
+    let myFavorited = document.getElementById("nav-item-my-favorited")
+    let myCommented = document.getElementById("nav-item-my-commented")
+    
+    viewAll.addEventListener('click', (e) => renderFilteredArt(e, user))
+    myFavorited.addEventListener('click', (e) => renderFilteredArt(e, user))
+    myCommented.addEventListener('click', (e) => renderFilteredArt(e, user))
+}
+
+const renderFilteredArt = (e, user) => {
+    e.preventDefault()
+
+    let command = e.target.innerText
+    let navUl = e.target.parentElement.parentElement
+    let allArtCardsDiv = document.getElementById("features")
+
+    allArtCardsDiv.innerHTML = ""
+    
+    if (command === "My Favorited"){
+        switchActiveNavLink(e.target.parentElement, navUl)
+       
+        fetch(`http://localhost:3000/likes`)
+        .then(res => res.json())
+        .then(json => {
+            let rendered = false
+            json.forEach(like => { 
+                if (like.user_id == user.id){
+                    fetch(`http://localhost:3000/artworks/${like.artwork_id}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        renderArtCard(json, user)
+                    })
+                    rendered = true
+                }
+            })
+            if (!rendered) {
+                updateJumbotron("Oops!", "Sorry, you don't have any favorites!")
+            }
+            else {
+                updateJumbotron("Your Favorites Collection", "Curated for you, by you!")
+            }
+        })
+
+    }
+    else if (command === "My Commented"){
+        switchActiveNavLink(e.target.parentElement, navUl)
+
+        fetch(`http://localhost:3000/comments`)
+        .then(res => res.json())
+        .then(json => {
+            let rendered = false
+            json.forEach(comment => { 
+                if (comment.user_id == user.id){
+                    fetch(`http://localhost:3000/artworks/${comment.artwork_id}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        renderArtCard(json, user)
+                    })
+                    rendered = true
+                }
+            })
+            if (!rendered) {
+                updateJumbotron("Oops!", "Sorry, you haven't made any comments yet!")
+            }
+            else {
+                updateJumbotron("Your Comments Collection", "Stay up to date with the art you're talking about!")
+            }
+        })
+    }
+    else {
+        updateJumbotron("Viewing All Artwork", "Like, view, and comment on your favorites!")
+        fetchAllArtworks(user)
+        switchActiveNavLink(e.target.parentElement, navUl)
+    }
+}
+
+const switchActiveNavLink = (myLi, navUl) => {
+    let allLi = navUl.querySelectorAll('li')
+    allLi.forEach(li => {
+        li.className = "nav-item"
+    })
+    myLi.className = "nav-item active"
+}
+
+const updateJumbotron = (header, subheader="") => {
+    let h1 = document.querySelector('header h1')
+    let p = document.querySelector('header p')
+    h1.innerText = header
+    p.innerText = subheader
+}
 
 const renderArtCard = (artwork, user) => {
     let div = document.getElementById("features")
@@ -117,7 +214,7 @@ const renderArtCard = (artwork, user) => {
         <img class="card-img-top" src="${artwork.artwork_image}" alt="">
         <div class="card-body">
             <h5 class="card-title">${artwork.artwork_title}</h5>
-            <p class="card-text">Created by ${artwork.artist_name}, ${artwork.artist_nationality}, in ${artwork.artwork_date}</p>
+            <p class="card-text">Created${artwork.artist_name == "" ? "" : ` by ${artwork.artist_name}`}${artwork.artist_nationality == "" ? "" : `, ${artwork.artist_nationality},`} in ${artwork.artwork_date}</p>
         </div>
         <div class="card-footer">
             <a href="#" class="btn btn-danger" id="like-button">♥ ${artwork.likes.length}</a>
@@ -126,20 +223,24 @@ const renderArtCard = (artwork, user) => {
         </div>
 
     `
-    // debugger
     div.appendChild(artCard)
     
     let likeButton = artCard.querySelector("#like-button")
-    likeButton.addEventListener('click', (e) => likeArtwork(e, artwork, user)) 
+    likeButton.addEventListener('click', (e) => {
+        e.preventDefault()
+        likeArtwork(e, artwork, user)
+    }) 
 
     let viewCommentsButton = artCard.querySelector("#view-comments-button")
-    viewCommentsButton.addEventListener('click', (e) => viewComments(e, artwork, user)) 
+    viewCommentsButton.addEventListener('click', (e) => {  
+    e.preventDefault()
+    viewComments(e, artwork, user)
+    })
 }
 
 const likeArtwork = (e, artwork, user) => {
     let data = {
         artwork_id: artwork.id,
-        // Need to identify user
         user_id: user.id
     }
     updatedLikes = artwork.likes.length +=1
@@ -183,14 +284,13 @@ const viewComments = (e, artwork, user) => {
         artwork.comments.map (function(comment){
             let thisComment = document.createElement('ul')
             thisComment.className = "comment-list"
-            // debugger
             thisComment.innerText = `♥ ${comment.content}`
             commentDiv.appendChild(thisComment)
         })
         artCard.appendChild(commentDiv)
 
         let addCommentButton = document.createElement('button')
-        addCommentButton.innerHTML = "Add Comment"
+        addCommentButton.innerHTML = "My Comments"
         addCommentButton.className="btn btn-danger"
         addCommentButton.id="add-comment-button"
         artCard.appendChild(addCommentButton)
@@ -199,29 +299,61 @@ const viewComments = (e, artwork, user) => {
         popUpCard.appendChild(artCard)
 
         let closeButton = artCard.querySelector("#close-button")
-        closeButton.addEventListener('click', (e) => popUpCard.remove()) 
+        closeButton.addEventListener('click', (e) => {
+            e.preventDefault()
+            popUpCard.remove()
+        }) 
 }
 
-const showAddComment= (e, artwork, user) => {
+const showAddComment = (e, artwork, user) => {
     let commentDiv = document.querySelector('#comment-div')
     commentDiv.remove()
     let addCommentButton = document.querySelector('#add-comment-button')
     addCommentButton.remove()
+
+    let artCard = document.querySelector('#add-comment-art-card')
+
+    let myCommentsDiv = document.createElement('div')
+    let myCommentsHeader = document.createElement('h6')
+    myCommentsHeader.innerHTML = "My Comments"
+    artCard.appendChild(myCommentsHeader)
+
+    myCommentsDiv.id = "my-comments-div"
+    artwork.comments.map (function(comment) {
+        if (comment.user_id == user.id) {
+            let thisComment = document.createElement('ul')
+            thisComment.id = `${comment.id}`
+            thisComment.innerText = `♥ ${comment.content}`
+
+            editCommentButton = document.createElement('button')
+            editCommentButton.className="edit-comment-button"
+            editCommentButton.id = `${comment.id}`
+            editCommentButton.innerHTML = "Edit"
+            editCommentButton.addEventListener('click', (e) => renderEditCommentForm(e, artwork, user)) 
+
+            deleteCommentButton = document.createElement('button')
+            deleteCommentButton.className="delete-comment-button"
+            deleteCommentButton.id = `${comment.id}`
+            deleteCommentButton.innerHTML = "Delete"
+            deleteCommentButton.addEventListener('click', (e) => deleteComment(e, artwork, user)) 
+
+            thisComment.appendChild(deleteCommentButton)
+            thisComment.appendChild(editCommentButton)
+            myCommentsDiv.appendChild(thisComment)
+        }
+    })
+    artCard.appendChild(myCommentsDiv)
+
+
     let commentForm = document.createElement('div')
+    commentForm.id = "comment-form"
     commentForm.innerHTML = `
         <form id='comment-form'>
-        <input class="form-control input-lg" id="inputlg" type="text">
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <input type='submit' class="btn btn-danger" value='Post Comment'>
+        <input id="inputlg" type="text" placeholder="What would you like to say?">
+        <input type='submit' class="btn btn-danger" id: "post-comment-button" style="float: right" value='Post Comment'>
         </form>
     `
-    let artCard = document.querySelector('#add-comment-art-card')
+
     artCard.appendChild(commentForm)
     .addEventListener('submit', (e) => {
         e.preventDefault()
@@ -242,15 +374,129 @@ const postComment = (e, artwork, user) => {
 	'Accept': 'application/json'
 	},
 	body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then (res => {
+        let myCommentsDiv = document.getElementById("my-comments-div")
+        let thisComment = document.createElement('ul')
+        thisComment.innerText = `♥ ${e.target[0].value}`
+        thisComment.id = `${res.id}`
+        myCommentsDiv.appendChild(thisComment)
+
+        editCommentButton = document.createElement('button')
+        editCommentButton.className="edit-comment-button"
+        editCommentButton.id = `${res.id}`
+        editCommentButton.innerHTML = "Edit"
+        editCommentButton.addEventListener('click', (e) => renderEditCommentForm(e, artwork, user)) 
+
+        deleteCommentButton = document.createElement('button')
+        deleteCommentButton.className="delete-comment-button"
+        deleteCommentButton.id = `${res.id}`
+        deleteCommentButton.innerHTML = "Delete"
+        deleteCommentButton.addEventListener('click', (e) => deleteComment(e, artwork, user)) 
+
+        thisComment.appendChild(deleteCommentButton)
+        thisComment.appendChild(editCommentButton)
+        myCommentsDiv.appendChild(thisComment)
+
+        let inputBox = document.getElementById('inputlg')
+        inputBox.value = ""
+        inputBox.placeholder = "What would you like to say?"
+    })
+}
+
+const renderEditCommentForm = (e, artwork, user) => {
+    let editCommentForm = document.querySelector("#comment-form")
+    let artCard = document.querySelector('#add-comment-art-card')
+    let comment_id = e.target.id
+	fetch(`http://localhost:3000/comments/${comment_id}`, {
+	    method: 'GET'
+    })
+    .then(res => res.json())
+    .then (res => {
+        editCommentForm.remove()
+        let commentForm = document.createElement('div')
+        commentForm.id = "comment-form"
+        commentForm.innerHTML = `
+            <form id='comment-form'>
+            <input id="inputlg" type="text">
+            <input type='submit' class="btn btn-danger" id: "edit-comment-button" style="float: right" value='Edit Comment'>
+            </form>
+        `
+    
+        artCard.appendChild(commentForm)
+        let inputBox = document.getElementById('inputlg')
+        inputBox.value = `${res.content}`
+        commentForm.addEventListener('submit', (e) => {
+            e.preventDefault()
+            editComment(e, artwork, user, comment_id) 
+        })
+    })
+}
+
+const editComment = (e, artwork, user, comment_id) => {
+	let data = {
+        id: comment_id,
+        user_id: user.id,
+        artwork_id: artwork.id,
+        content: e.target[0].value
+    }
+    
+	fetch(`http://localhost:3000/comments/${comment_id}`, {
+	method: 'PATCH',
+	headers: {
+	'Content-Type': 'application/json',
+	'Accept': 'application/json'
+	},
+	body: JSON.stringify(data)
 	})
     .then (res => {
-        let popUpCard = document.querySelector(".pop-up-card")
-        popUpCard.remove()
-        viewComments(e, artwork, user)
-        let commentDiv = document.querySelector("#comment-div")
-        let thisComment = document.createElement('ul')
-        // debugger
+        let commentDiv = document.querySelector("#my-comments-div")
+        let thisComment = document.getElementById(`${comment_id}`)
         thisComment.innerText = `♥ ${e.target[0].value}`
+
+        editCommentButton = document.createElement('button')
+        editCommentButton.className="edit-comment-button"
+        editCommentButton.id = `${comment_id}`
+        editCommentButton.innerHTML = "Edit"
+        editCommentButton.addEventListener('click', (e) => renderEditCommentForm(e, artwork, user)) 
+
+        deleteCommentButton = document.createElement('button')
+        deleteCommentButton.className="delete-comment-button"
+        deleteCommentButton.id = `${comment_id}`
+        deleteCommentButton.innerHTML = "Delete"
+        deleteCommentButton.addEventListener('click', (e) => deleteComment(e, artwork, user)) 
+
+        thisComment.appendChild(deleteCommentButton)
+        thisComment.appendChild(editCommentButton)
         commentDiv.appendChild(thisComment)
+
+        let editCommentForm = document.querySelector("#comment-form")
+        editCommentForm.remove()
+        let commentForm = document.createElement('div')
+        commentForm.id = "comment-form"
+        commentForm.innerHTML = `
+        <form id='comment-form'>
+        <input id="inputlg" type="text" placeholder="What would you like to say?">
+        <input type='submit' class="btn btn-danger" id: "post-comment-button" style="float: right" value='Post Comment'>
+        </form>
+    `
+        let artCard = document.querySelector('#add-comment-art-card')
+        artCard.appendChild(commentForm)
+        .addEventListener('submit', (e) => {
+            e.preventDefault()
+            postComment(e, artwork, user) 
+        })
+    })
+}
+
+const deleteComment = (e, artwork, user) => {
+    let comment_id = e.currentTarget.id
+	fetch(`http://localhost:3000/comments/${comment_id}`, {
+	    method: 'DELETE'
+	})
+    .then (res => {
+        let thisComment = document.getElementById(`${comment_id}`)
+        thisComment.remove()
     })
 }
