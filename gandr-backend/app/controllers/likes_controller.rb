@@ -1,6 +1,7 @@
 class LikesController < ApplicationController
 
     require_relative '../services/like_serializer.rb'
+    require_relative '../services/artwork_serializer.rb'
 
     def show
         like = Like.find_by(id: params[:id])
@@ -17,15 +18,9 @@ class LikesController < ApplicationController
     end
 
     def create
-        @like = Like.new(user_id: params["user_id"], artwork_id: params["artwork_id"])
-        if @like.save
-            ## what do we want to show?
-            render json: LikeSerializer.new(like).to_serialized_json
-        else 
-            flash[:message] = @like.errors.full_messages
-            ## what do we want to show?
-            render json: LikeSerializer.new(like).to_serialized_json
-        end
+        @like = Like.create(user_id: params["user_id"], artwork_id: params["artwork_id"])
+        artworks = Artwork.all
+        render json: ArtworkSerializer.new(artworks).to_serialized_json
     end
 
     def destroy

@@ -9,8 +9,12 @@
 
 document.addEventListener('DOMContentLoaded', (e) => {    
     
-    login()    
-
+    let success = login()
+    while (!success) {
+        success = login()
+        return success
+    }
+    
 })
 
 const login = () => {
@@ -70,24 +74,29 @@ const renderArtCard = (artwork) => {
             <p class="card-text">Created by ${artwork.artist_name}, ${artwork.artist_nationality}, in ${artwork.artwork_date}</p>
         </div>
         <div class="card-footer">
-            <a href="#" class="btn btn-danger" id="like-button">♥</a>
+            <a href="#" class="btn btn-danger" id="like-button">♥ ${artwork.likes.length}</a>
             <a href="#" class="btn btn-primary" id="post-comment-button">Comment</a>
         </div>
         </div>
 
     `
+    // debugger
     div.prepend(artCard)
     
     let likeButton = artCard.querySelector("#like-button")
     likeButton.addEventListener('click', (e) => likeArtwork(e, artwork)) 
+
+    let postCommentButton = artCard.querySelector("#post-comment-button")
+    postCommentButton.addEventListener('click', (e) => postComment(e, artwork)) 
 }
 
 const likeArtwork = (e, artwork) => {
     let data = {
         artwork_id: artwork.id,
         // Need to identify user
-        user_id: user.id
+        user_id: 56
     }
+    updatedLikes = artwork.likes.length +=1
     fetch(`http://localhost:3000/likes`,{
         method: 'POST',
         headers: {
@@ -95,22 +104,26 @@ const likeArtwork = (e, artwork) => {
         },
         body: JSON.stringify(data)
         })
-        .then(res => res.json()) 
+        .then(res => {
+            let artCard = document.getElementById(`${artwork.artwork_met_id}`)
+            let likeButton = artCard.querySelector("#like-button")
+            likeButton.innerHTML = `♥ ${updatedLikes}`
+        })      
 }
 
-const postComment = (e, artwork) => {
-    let data = {
-        artwork_id: artwork.id,
-        // Need to identify user
-        user_id: user.id
-        // Add content
-    }
-    fetch(`http://localhost:3000/comments`,{
-        method: 'POST',
-        headers: {
-        'Content-Type':'application/json',
-        },
-        body: JSON.stringify(data)
-        })
-        .then(res => res.json()) 
-}
+// const postComment = (e, artwork) => {
+//     let data = {
+//         artwork_id: artwork.id,
+//         // Need to identify user
+//         user_id: user.id
+//         // Add content
+//     }
+//     fetch(`http://localhost:3000/comments`,{
+//         method: 'POST',
+//         headers: {
+//         'Content-Type':'application/json',
+//         },
+//         body: JSON.stringify(data)
+//         })
+//         .then(res => res.json()) 
+// }
