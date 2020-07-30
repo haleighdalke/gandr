@@ -123,39 +123,66 @@ const navBarEventListeners = (user) => {
 
 const renderFilteredArt = (e, user) => {
     e.preventDefault()
-    let command = e.target.innerText
 
+    let command = e.target.innerText
     let navUl = e.target.parentElement.parentElement
+    let allArtCardsDiv = document.getElementById("features")
+
+    allArtCardsDiv.innerHTML = ""
     
     if (command === "My Favorited"){
-        //fetch by user likes
         switchActiveNavLink(e.target.parentElement, navUl)
-        // fetch(`http://localhost:3000/likes`)
-        // .then(res => res.json())
-        // .then(json => {
-        //     console.log(json)
-        //     // go through all likes and only display ones with our user id
-        //         // update page
-        //     let header = document.querySelector("header")
-        //     h1 = header.querySelector("h1")
-        //     h1.innerText = `${user.username}'s Liked Artworks`
+       
+        fetch(`http://localhost:3000/likes`)
+        .then(res => res.json())
+        .then(json => {
+            let rendered = false
+            json.forEach(like => { 
+                if (like.user_id == user.id){
+                    fetch(`http://localhost:3000/artworks/${like.artwork_id}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        renderArtCard(json, user)
+                    })
+                    rendered = true
+                }
+            })
+            if (!rendered) {
+                updateJumbotron("Oops!", "Sorry, you don't have any favorites!")
+            }
+            else {
+                updateJumbotron("Your Favorites Collection", "Curated for you, by you!")
+            }
+        })
 
-        //     let artCardsDiv = document.getElementById("features")
-        //     artCardsDiv.innerHTML = ""
-
-        //     json.forEach(like => {
-        //         if (like.user.id === user.id){
-        //             renderArtCard(like.artwork, like.user)
-        //         }
-        //     })
-        //     debugger
-        // })
     }
     else if (command === "My Commented"){
-        //fetch by user comments
         switchActiveNavLink(e.target.parentElement, navUl)
+
+        fetch(`http://localhost:3000/comments`)
+        .then(res => res.json())
+        .then(json => {
+            let rendered = false
+            json.forEach(comment => { 
+                if (comment.user_id == user.id){
+                    fetch(`http://localhost:3000/artworks/${comment.artwork_id}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        renderArtCard(json, user)
+                    })
+                    rendered = true
+                }
+            })
+            if (!rendered) {
+                updateJumbotron("Oops!", "Sorry, you haven't made any comments yet!")
+            }
+            else {
+                updateJumbotron("Your Comments Collection", "Stay up to date with the art you're talking about!")
+            }
+        })
     }
     else {
+        updateJumbotron("Viewing All Artwork", "Like, view, and comment on your favorites!")
         fetchAllArtworks(user)
         switchActiveNavLink(e.target.parentElement, navUl)
     }
@@ -167,6 +194,13 @@ const switchActiveNavLink = (myLi, navUl) => {
         li.className = "nav-item"
     })
     myLi.className = "nav-item active"
+}
+
+const updateJumbotron = (header, subheader="") => {
+    let h1 = document.querySelector('header h1')
+    let p = document.querySelector('header p')
+    h1.innerText = header
+    p.innerText = subheader
 }
 
 const renderArtCard = (artwork, user) => {
