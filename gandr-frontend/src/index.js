@@ -22,27 +22,30 @@ const login = () => {
     let return_value = false
     let loginForm = document.getElementById("login-form")
     loginForm.addEventListener('submit', (e) => {
-        // validate username and transition
         e.preventDefault()
 
         fetch('http://localhost:3000/users')
         .then(res => res.json())
         .then(json => {
+            let foundUser
             json.forEach(user => {
                 if (user.username === e.target[0].value){
-                    let landingDiv = document.getElementById("landing")
-                    landingDiv.style.display = "none"
-                    renderHomePage(user)
-                    // stop the loop and set return value to true
-                    return return_value = true
+                    // remember user and update return value to true
+                    foundUser = user
+                    return_value = true
                 }
             })        
-            if (!return_value){
+            if (!foundUser){
                 // display error tag
                 let error = document.getElementById("login-error")
                 error.innerText = ""
                 error.innerText = "Sorry, invalid username or login. Please try again."
                 loginForm.reset()
+            }
+            else{
+                let landingDiv = document.getElementById("landing")
+                landingDiv.style.display = "none"
+                renderHomePage(foundUser)
             }
         })
     })
@@ -89,7 +92,16 @@ const renderHomePage = (user) => {
     fetch('http://localhost:3000/artworks')
     .then(res => res.json())
     .then(json => {
-        json.forEach(artwork => renderArtCard(artwork, user))
+        let counter = 0
+        json.forEach(artwork => {
+            if (counter < 30){
+                renderArtCard(artwork, user)
+                counter++
+            }
+            else{
+                return true
+            }
+        })
     })
 }
 
@@ -115,7 +127,7 @@ const renderArtCard = (artwork, user) => {
 
     `
     // debugger
-    div.prepend(artCard)
+    div.appendChild(artCard)
     
     let likeButton = artCard.querySelector("#like-button")
     likeButton.addEventListener('click', (e) => likeArtwork(e, artwork, user)) 

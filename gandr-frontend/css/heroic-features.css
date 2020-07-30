@@ -88,9 +88,13 @@ a.btn.btn-primary {
 
 #home {
   display: none;
-  padding-top: 250px !important;
+  height: fit-content;
   background-color: rgb(219, 219, 219) !important;
-  opacity: 0.9 !important;
+}
+
+#main-content{
+  padding-top: 100px !important;
+  overflow: visible;
 }
 
 dialog.pop-up-card {
@@ -135,4 +139,8 @@ button#add-comment-button.btn.btn-danger {
   width: 500px;
   text-align: center;
   vertical-align: center;
+}
+
+.container {
+  height: 100%;
 }
