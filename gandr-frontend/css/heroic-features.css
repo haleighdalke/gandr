@@ -88,13 +88,18 @@ a.btn.btn-primary {
 
 #home {
   display: none;
-  height: fit-content;
-  background-color: rgb(219, 219, 219) !important;
+  /* height: fit-content; */
+  /* background-color: rgb(219, 219, 219) !important; */
 }
 
 #main-content{
-  padding-top: 100px !important;
+  padding-top: 50px !important;
   overflow: visible;
+  background-color: rgb(219, 219, 219) !important;;
+}
+
+#features {
+  background-color: inherit !important;
 }
 
 dialog.pop-up-card {
@@ -164,4 +169,11 @@ button#add-comment-button.btn.btn-danger {
 
 #post-comment-button {
   height: 40px;
+footer a:hover, a:active {
+  color: white;
+}
+
+footer a:visited {
+  color: inherit;
+  font-weight: bold;
 }
