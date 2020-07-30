@@ -92,8 +92,16 @@ const renderHomePage = (user) => {
     fetch('http://localhost:3000/artworks')
     .then(res => res.json())
     .then(json => {
-        debugger
-        json.forEach(artwork => renderArtCard(artwork, user))
+        let counter = 0
+        json.forEach(artwork => {
+            if (counter < 30){
+                renderArtCard(artwork, user)
+                counter++
+            }
+            else{
+                return true
+            }
+        })
     })
 }
 
@@ -119,7 +127,7 @@ const renderArtCard = (artwork, user) => {
 
     `
     // debugger
-    div.prepend(artCard)
+    div.appendChild(artCard)
     
     let likeButton = artCard.querySelector("#like-button")
     likeButton.addEventListener('click', (e) => likeArtwork(e, artwork, user)) 
