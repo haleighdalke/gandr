@@ -214,7 +214,7 @@ const renderArtCard = (artwork, user) => {
         <img class="card-img-top" src="${artwork.artwork_image}" alt="">
         <div class="card-body">
             <h5 class="card-title">${artwork.artwork_title}</h5>
-            <p class="card-text">Created by ${artwork.artist_name}, ${artwork.artist_nationality}, in ${artwork.artwork_date}</p>
+            <p class="card-text">Created${artwork.artist_name == "" ? "" : ` by ${artwork.artist_name}`}${artwork.artist_nationality == "" ? "" : `, ${artwork.artist_nationality},`} in ${artwork.artwork_date}</p>
         </div>
         <div class="card-footer">
             <a href="#" class="btn btn-danger" id="like-button">♥ ${artwork.likes.length}</a>
