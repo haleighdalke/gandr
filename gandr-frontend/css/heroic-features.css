@@ -144,12 +144,31 @@ button#add-comment-button.btn.btn-danger {
   width: 500px;
   text-align: center;
   vertical-align: center;
+  white-space: nowrap;
 }
 
 .container {
   height: 100%;
 }
 
+#my-comments-div {
+  height: 170px;
+  width: 500px;
+  overflow: scroll;
+  text-align: left;
+  padding-bottom: 50px !important;
+}
+
+#inputlg {
+  width: 70%;
+  float: left;
+  height: 40px;
+  padding-left: 5px;
+  margin-left: 10px;
+}
+
+#post-comment-button {
+  height: 40px;
 footer a:hover, a:active {
   color: white;
 }
