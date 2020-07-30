@@ -129,8 +129,13 @@ const renderFilteredArt = (e, user) => {
     
     if (command === "My Favorited"){
         //fetch by user likes
-        switchActiveNavLink(e.target.parentElement, navUl)
-        debugger
+        // switchActiveNavLink(e.target.parentElement, navUl)
+        // fetch(`http://localhost:3000/users/${user.id}`)
+        // .then(res => res.json())
+        // .then(json => {
+        //     console.log(json)
+        //     debugger
+        // })
     }
     else if (command === "My Commented"){
         //fetch by user comments
