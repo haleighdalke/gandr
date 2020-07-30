@@ -15,8 +15,8 @@ class CommentsController < ApplicationController
     end
 
     def create
-        @comment = Comment.new(user_id: params["user_id"], artwork_id: params["artwork_id"], content: params["content"])
-        if @comment.save
+        comment = Comment.new(user_id: params["user_id"], artwork_id: params["artwork_id"], content: params["content"])
+        if comment.save
             ## what do we want to show?
             render json: CommentSerializer.new(comment).to_serialized_json
         else 

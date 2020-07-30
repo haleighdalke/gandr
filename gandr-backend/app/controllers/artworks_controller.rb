@@ -8,6 +8,7 @@ class ArtworksController < ApplicationController
     end
 
     def index
+      # byebug
       artworks = Artwork.all
       render json: ArtworkSerializer.new(artworks).to_serialized_json
     end

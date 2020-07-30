@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
         success = login()
         return success
     }
-    
+
 })
 
 const login = () => {
@@ -89,12 +89,12 @@ const renderHomePage = (user) => {
     fetch('http://localhost:3000/artworks')
     .then(res => res.json())
     .then(json => {
-        json.forEach(artwork => renderArtCard(artwork))
+        json.forEach(artwork => renderArtCard(artwork, user))
     })
 }
 
 
-const renderArtCard = (artwork) => {
+const renderArtCard = (artwork, user) => {
     let div = document.getElementById("features")
     let artCard = document.createElement('div')
     artCard.className = "col-lg-3 col-md-6 mb-4"
@@ -109,7 +109,7 @@ const renderArtCard = (artwork) => {
         </div>
         <div class="card-footer">
             <a href="#" class="btn btn-danger" id="like-button">♥ ${artwork.likes.length}</a>
-            <a href="#" class="btn btn-primary" id="post-comment-button">Comment</a>
+            <a href="#" class="btn btn-primary" id="view-comments-button">View</a>
         </div>
         </div>
 
@@ -118,17 +118,17 @@ const renderArtCard = (artwork) => {
     div.prepend(artCard)
     
     let likeButton = artCard.querySelector("#like-button")
-    likeButton.addEventListener('click', (e) => likeArtwork(e, artwork)) 
+    likeButton.addEventListener('click', (e) => likeArtwork(e, artwork, user)) 
 
-    let postCommentButton = artCard.querySelector("#post-comment-button")
-    postCommentButton.addEventListener('click', (e) => postComment(e, artwork)) 
+    let viewCommentsButton = artCard.querySelector("#view-comments-button")
+    viewCommentsButton.addEventListener('click', (e) => viewComments(e, artwork, user)) 
 }
 
-const likeArtwork = (e, artwork) => {
+const likeArtwork = (e, artwork, user) => {
     let data = {
         artwork_id: artwork.id,
         // Need to identify user
-        user_id: 56
+        user_id: user.id
     }
     updatedLikes = artwork.likes.length +=1
     fetch(`http://localhost:3000/likes`,{
@@ -145,23 +145,100 @@ const likeArtwork = (e, artwork) => {
         })      
 }
 
-const postComment = (e, artwork) => {
-    // debugger
-    // modal.classList.toggle("show-modal");
+const viewComments = (e, artwork, user) => {
+        let popUpCard = document.createElement("dialog");
+        popUpCard.className = "pop-up-card"
+        document.body.appendChild(popUpCard)
+        popUpCard.showModal();
 
+        let artCard = document.createElement("card")
+        artCard.id = "add-comment-art-card"
+        artCard.innerHTML = `
+        
+        <div class="pop-up-card">
+            <a href="#" class="btn-default" id="close-button">☒ Close</a>
+            <div class="pop-up-img">
+                <img class="pop-up-img" src="${artwork.artwork_image}" alt="">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">${artwork.artwork_title}</h5>
+            </div>
+        </div>
+        `
 
-    // let data = {
-    //     artwork_id: artwork.id,
-    //     // Need to identify user
-    //     user_id: user.id
-    //     // Add content
-    // }
-    // fetch(`http://localhost:3000/comments`,{
-    //     method: 'POST',
-    //     headers: {
-    //     'Content-Type':'application/json',
-    //     },
-    //     body: JSON.stringify(data)
-    //     })
-    //     .then(res => res.json()) 
+        let commentDiv = document.createElement('div')
+        commentDiv.id = "comment-div"
+        artwork.comments.map (function(comment){
+            let thisComment = document.createElement('ul')
+            thisComment.className = "comment-list"
+            // debugger
+            thisComment.innerText = `♥ ${comment.content}`
+            commentDiv.appendChild(thisComment)
+        })
+        artCard.appendChild(commentDiv)
+
+        let addCommentButton = document.createElement('button')
+        addCommentButton.innerHTML = "Add Comment"
+        addCommentButton.className="btn btn-danger"
+        addCommentButton.id="add-comment-button"
+        artCard.appendChild(addCommentButton)
+        addCommentButton.addEventListener('click', (e) => showAddComment(e, artwork, user))
+
+        popUpCard.appendChild(artCard)
+
+        let closeButton = artCard.querySelector("#close-button")
+        closeButton.addEventListener('click', (e) => popUpCard.remove()) 
+}
+
+const showAddComment= (e, artwork, user) => {
+    let commentDiv = document.querySelector('#comment-div')
+    commentDiv.remove()
+    let addCommentButton = document.querySelector('#add-comment-button')
+    addCommentButton.remove()
+    let commentForm = document.createElement('div')
+    commentForm.innerHTML = `
+        <form id='comment-form'>
+        <input class="form-control input-lg" id="inputlg" type="text">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <input type='submit' class="btn btn-danger" value='Post Comment'>
+        </form>
+    `
+    let artCard = document.querySelector('#add-comment-art-card')
+    artCard.appendChild(commentForm)
+    .addEventListener('submit', (e) => {
+        e.preventDefault()
+        postComment(e, artwork, user) 
+    })
+}
+
+const postComment = (e, artwork, user) => {
+	let data = {
+        user_id: user.id,
+        artwork_id: artwork.id,
+        content: e.target[0].value
+	}
+	fetch(`http://localhost:3000/comments`, {
+	method: 'POST',
+	headers: {
+	'Content-Type': 'application/json',
+	'Accept': 'application/json'
+	},
+	body: JSON.stringify(data)
+	})
+    .then (res => {
+        let popUpCard = document.querySelector(".pop-up-card")
+        popUpCard.remove()
+        viewComments(e, artwork, user)
+        let commentDiv = document.querySelector("#comment-div")
+        let thisComment = document.createElement('ul')
+        // debugger
+        thisComment.innerText = `♥ ${e.target[0].value}`
+        commentDiv.appendChild(thisComment)
+    })
 }

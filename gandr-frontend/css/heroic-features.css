@@ -92,3 +92,47 @@ a.btn.btn-primary {
   background-color: rgb(219, 219, 219) !important;
   opacity: 0.9 !important;
 }
+
+dialog.pop-up-card {
+  height: 800px;
+  width: 550px;
+  background-color: F8F9FA;
+  border: 0px solid;
+  opacity: 0.9 !important;
+  text-align:center;
+}
+
+img.pop-up-img {
+  height: 400px;
+  width: 300px;
+  vertical-align: middle;
+}
+
+div.pop-up-card {
+  vertical-align: middle;
+  text-align: center;
+  background-color: F8F9FA;
+}
+
+a#close-button.btn-default {
+  vertical-align: right;
+}
+
+button#add-comment-button.btn.btn-danger {
+  vertical-align: right;
+}
+
+#comment-div {
+  height: 200px;
+  width: 500px;
+  overflow: scroll;
+  padding-bottom: 50px !important;
+  text-align: left;
+}
+
+#comment-form {
+  height: 250px;
+  width: 500px;
+  text-align: center;
+  vertical-align: center;
+}

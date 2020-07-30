@@ -10,7 +10,8 @@ class ArtworkSerializer
     def to_serialized_json
         options = {
             include: {
-                likes: {}
+                likes: {},
+                comments: {}
             },
             except: [:updated_at, :created_at]
         }
