@@ -126,22 +126,28 @@ const renderFilteredArt = (e, user) => {
     let command = e.target.innerText
 
     let navUl = e.target.parentElement.parentElement
-    navUl.querySelectorAll('li')
-    debugger
+    
     if (command === "My Favorited"){
         //fetch by user likes
+        switchActiveNavLink(e.target.parentElement, navUl)
+        debugger
     }
     else if (command === "My Commented"){
         //fetch by user comments
+        switchActiveNavLink(e.target.parentElement, navUl)
     }
     else {
         fetchAllArtworks(user)
-        e.target.parentElement.class = "nav-item active"
+        switchActiveNavLink(e.target.parentElement, navUl)
     }
 }
 
-const findActiveNavLink = () => {
-
+const switchActiveNavLink = (myLi, navUl) => {
+    let allLi = navUl.querySelectorAll('li')
+    allLi.forEach(li => {
+        li.className = "nav-item"
+    })
+    myLi.className = "nav-item active"
 }
 
 const renderArtCard = (artwork, user) => {
