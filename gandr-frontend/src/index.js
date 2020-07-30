@@ -223,11 +223,13 @@ const renderArtCard = (artwork, user) => {
         </div>
 
     `
-    // debugger
     div.appendChild(artCard)
     
     let likeButton = artCard.querySelector("#like-button")
-    likeButton.addEventListener('click', (e) => likeArtwork(e, artwork, user)) 
+    likeButton.addEventListener('click', (e) => {
+        e.preventDefault()
+        likeArtwork(e, artwork, user)
+    }) 
 
     let viewCommentsButton = artCard.querySelector("#view-comments-button")
     viewCommentsButton.addEventListener('click', (e) => {  
@@ -239,7 +241,6 @@ const renderArtCard = (artwork, user) => {
 const likeArtwork = (e, artwork, user) => {
     let data = {
         artwork_id: artwork.id,
-        // Need to identify user
         user_id: user.id
     }
     updatedLikes = artwork.likes.length +=1
