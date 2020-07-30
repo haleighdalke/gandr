@@ -230,7 +230,10 @@ const renderArtCard = (artwork, user) => {
     likeButton.addEventListener('click', (e) => likeArtwork(e, artwork, user)) 
 
     let viewCommentsButton = artCard.querySelector("#view-comments-button")
-    viewCommentsButton.addEventListener('click', (e) => viewComments(e, artwork, user)) 
+    viewCommentsButton.addEventListener('click', (e) => {  
+    e.preventDefault()
+    viewComments(e, artwork, user)
+    })
 }
 
 const likeArtwork = (e, artwork, user) => {
@@ -295,7 +298,10 @@ const viewComments = (e, artwork, user) => {
         popUpCard.appendChild(artCard)
 
         let closeButton = artCard.querySelector("#close-button")
-        closeButton.addEventListener('click', (e) => popUpCard.remove()) 
+        closeButton.addEventListener('click', (e) => {
+            e.preventDefault()
+            popUpCard.remove()
+        }) 
 }
 
 const showAddComment = (e, artwork, user) => {
@@ -315,7 +321,23 @@ const showAddComment = (e, artwork, user) => {
     artwork.comments.map (function(comment) {
         if (comment.user_id == user.id) {
             let thisComment = document.createElement('ul')
+            thisComment.id = `${comment.id}`
             thisComment.innerText = `♥ ${comment.content}`
+
+            editCommentButton = document.createElement('button')
+            editCommentButton.className="edit-comment-button"
+            editCommentButton.id = `${comment.id}`
+            editCommentButton.innerHTML = "Edit"
+            editCommentButton.addEventListener('click', (e) => renderEditCommentForm(e, artwork, user)) 
+
+            deleteCommentButton = document.createElement('button')
+            deleteCommentButton.className="delete-comment-button"
+            deleteCommentButton.id = `${comment.id}`
+            deleteCommentButton.innerHTML = "Delete"
+            deleteCommentButton.addEventListener('click', (e) => deleteComment(e, artwork, user)) 
+
+            thisComment.appendChild(deleteCommentButton)
+            thisComment.appendChild(editCommentButton)
             myCommentsDiv.appendChild(thisComment)
         }
     })
@@ -323,12 +345,14 @@ const showAddComment = (e, artwork, user) => {
 
 
     let commentForm = document.createElement('div')
+    commentForm.id = "comment-form"
     commentForm.innerHTML = `
         <form id='comment-form'>
         <input id="inputlg" type="text" placeholder="What would you like to say?">
         <input type='submit' class="btn btn-danger" id: "post-comment-button" style="float: right" value='Post Comment'>
         </form>
     `
+
     artCard.appendChild(commentForm)
     .addEventListener('submit', (e) => {
         e.preventDefault()
@@ -349,15 +373,129 @@ const postComment = (e, artwork, user) => {
 	'Accept': 'application/json'
 	},
 	body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then (res => {
+        let myCommentsDiv = document.getElementById("my-comments-div")
+        let thisComment = document.createElement('ul')
+        thisComment.innerText = `♥ ${e.target[0].value}`
+        thisComment.id = `${res.id}`
+        myCommentsDiv.appendChild(thisComment)
+
+        editCommentButton = document.createElement('button')
+        editCommentButton.className="edit-comment-button"
+        editCommentButton.id = `${res.id}`
+        editCommentButton.innerHTML = "Edit"
+        editCommentButton.addEventListener('click', (e) => renderEditCommentForm(e, artwork, user)) 
+
+        deleteCommentButton = document.createElement('button')
+        deleteCommentButton.className="delete-comment-button"
+        deleteCommentButton.id = `${res.id}`
+        deleteCommentButton.innerHTML = "Delete"
+        deleteCommentButton.addEventListener('click', (e) => deleteComment(e, artwork, user)) 
+
+        thisComment.appendChild(deleteCommentButton)
+        thisComment.appendChild(editCommentButton)
+        myCommentsDiv.appendChild(thisComment)
+
+        let inputBox = document.getElementById('inputlg')
+        inputBox.value = ""
+        inputBox.placeholder = "What would you like to say?"
+    })
+}
+
+const renderEditCommentForm = (e, artwork, user) => {
+    let editCommentForm = document.querySelector("#comment-form")
+    let artCard = document.querySelector('#add-comment-art-card')
+    let comment_id = e.target.id
+	fetch(`http://localhost:3000/comments/${comment_id}`, {
+	    method: 'GET'
+    })
+    .then(res => res.json())
+    .then (res => {
+        editCommentForm.remove()
+        let commentForm = document.createElement('div')
+        commentForm.id = "comment-form"
+        commentForm.innerHTML = `
+            <form id='comment-form'>
+            <input id="inputlg" type="text">
+            <input type='submit' class="btn btn-danger" id: "edit-comment-button" style="float: right" value='Edit Comment'>
+            </form>
+        `
+    
+        artCard.appendChild(commentForm)
+        let inputBox = document.getElementById('inputlg')
+        inputBox.value = `${res.content}`
+        commentForm.addEventListener('submit', (e) => {
+            e.preventDefault()
+            editComment(e, artwork, user, comment_id) 
+        })
+    })
+}
+
+const editComment = (e, artwork, user, comment_id) => {
+	let data = {
+        id: comment_id,
+        user_id: user.id,
+        artwork_id: artwork.id,
+        content: e.target[0].value
+    }
+    
+	fetch(`http://localhost:3000/comments/${comment_id}`, {
+	method: 'PATCH',
+	headers: {
+	'Content-Type': 'application/json',
+	'Accept': 'application/json'
+	},
+	body: JSON.stringify(data)
 	})
     .then (res => {
-        let popUpCard = document.querySelector(".pop-up-card")
-        popUpCard.remove()
-        viewComments(e, artwork, user)
-        let commentDiv = document.querySelector("#comment-div")
-        let thisComment = document.createElement('ul')
-        // debugger
+        let commentDiv = document.querySelector("#my-comments-div")
+        let thisComment = document.getElementById(`${comment_id}`)
         thisComment.innerText = `♥ ${e.target[0].value}`
+
+        editCommentButton = document.createElement('button')
+        editCommentButton.className="edit-comment-button"
+        editCommentButton.id = `${comment_id}`
+        editCommentButton.innerHTML = "Edit"
+        editCommentButton.addEventListener('click', (e) => renderEditCommentForm(e, artwork, user)) 
+
+        deleteCommentButton = document.createElement('button')
+        deleteCommentButton.className="delete-comment-button"
+        deleteCommentButton.id = `${comment_id}`
+        deleteCommentButton.innerHTML = "Delete"
+        deleteCommentButton.addEventListener('click', (e) => deleteComment(e, artwork, user)) 
+
+        thisComment.appendChild(deleteCommentButton)
+        thisComment.appendChild(editCommentButton)
         commentDiv.appendChild(thisComment)
+
+        let editCommentForm = document.querySelector("#comment-form")
+        editCommentForm.remove()
+        let commentForm = document.createElement('div')
+        commentForm.id = "comment-form"
+        commentForm.innerHTML = `
+        <form id='comment-form'>
+        <input id="inputlg" type="text" placeholder="What would you like to say?">
+        <input type='submit' class="btn btn-danger" id: "post-comment-button" style="float: right" value='Post Comment'>
+        </form>
+    `
+        let artCard = document.querySelector('#add-comment-art-card')
+        artCard.appendChild(commentForm)
+        .addEventListener('submit', (e) => {
+            e.preventDefault()
+            postComment(e, artwork, user) 
+        })
+    })
+}
+
+const deleteComment = (e, artwork, user) => {
+    let comment_id = e.currentTarget.id
+	fetch(`http://localhost:3000/comments/${comment_id}`, {
+	    method: 'DELETE'
+	})
+    .then (res => {
+        let thisComment = document.getElementById(`${comment_id}`)
+        thisComment.remove()
     })
 }

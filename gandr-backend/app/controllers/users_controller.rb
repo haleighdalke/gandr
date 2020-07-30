@@ -19,11 +19,9 @@ class UsersController < ApplicationController
     def create
         user = User.new(username: params["username"])
         if user.save
-            ## what do we want to show?
             render json: UserSerializer.new(user).to_serialized_json
         else 
             flash[:message] = user.errors.full_messages
-            ## what do we want to show?
             render json: UserSerializer.new(user).to_serialized_json
         end
     end
