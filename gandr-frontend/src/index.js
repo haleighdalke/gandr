@@ -130,12 +130,26 @@ const renderFilteredArt = (e, user) => {
     if (command === "My Favorited"){
         //fetch by user likes
         switchActiveNavLink(e.target.parentElement, navUl)
-        fetch(`http://localhost:3000/comments`)
-        .then(res => res.json())
-        .then(json => {
-            console.log(json)
-            debugger
-        })
+        // fetch(`http://localhost:3000/likes`)
+        // .then(res => res.json())
+        // .then(json => {
+        //     console.log(json)
+        //     // go through all likes and only display ones with our user id
+        //         // update page
+        //     let header = document.querySelector("header")
+        //     h1 = header.querySelector("h1")
+        //     h1.innerText = `${user.username}'s Liked Artworks`
+
+        //     let artCardsDiv = document.getElementById("features")
+        //     artCardsDiv.innerHTML = ""
+
+        //     json.forEach(like => {
+        //         if (like.user.id === user.id){
+        //             renderArtCard(like.artwork, like.user)
+        //         }
+        //     })
+        //     debugger
+        // })
     }
     else if (command === "My Commented"){
         //fetch by user comments
