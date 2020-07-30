@@ -6,6 +6,11 @@
 body {
   padding-top: 56px;
   background-image: url('../images/rothko_grey.jpg');
+  background-color: #cccccc; /* Used if the image is unavailable */
+  background-attachment: fixed;
+  background-position: center top; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
   font-family: 'Raleway', sans-serif;
 }
 
