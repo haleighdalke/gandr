@@ -5,7 +5,14 @@ class LikeSerializer
     end
      
     def to_serialized_json
-        @like.to_json(:except => [:updated_at, :created_at])
+        options = {
+            include: {
+                user: {},
+                artwork: {}
+            },
+            except: [:user_id, :artwork_id, :updated_at, :created_at]
+        }
+        @like.to_json(options)
     end
 
 end
