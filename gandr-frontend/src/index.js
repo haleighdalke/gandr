@@ -9,8 +9,8 @@
 
 document.addEventListener('DOMContentLoaded', (e) => {    
     
-    // while loop?
-    let success = login()    
+    login()    
+
 })
 
 const login = () => {
@@ -18,22 +18,24 @@ const login = () => {
     let loginForm = document.getElementById("login-form")
     loginForm.addEventListener('submit', (e) => {
         // validate username and transition
+        e.preventDefault()
+        renderHomePage(e.target[0].value)
         fetch('http://localhost:3000/users')
         .then(res => res.json())
         .then(json => {
             json.forEach(user => {
-                debugger
                 if (user.username === e.target[0].value){
                     let landingDiv = document.getElementById("landing")
                     landingDiv.remove()
-                    renderHomePage(username)
+                    renderHomePage(user.username)
                     return true
                 }
                 else {
                     // display error tag
-                    let loginButtons = document.getElementById("login-buttons")
-                    let error = document.createElement('p')
-                    p.innerText = "Sorry, invalid username or login. Please try again."
+                    
+                    let error = document.getElementById("login-error")
+                    error.innerText = ""
+                    error.innerText = "Sorry, invalid username or login. Please try again."
                     loginForm.reset()
                     return false
                 }
@@ -76,9 +78,6 @@ const renderArtCard = (artwork) => {
     `
     div.prepend(artCard)
     
-    let likeButton = artCard.querySelector("#like-button")
-    likeButton.addEventListener('click', (e) => likeArtwork(e, artwork)) 
-
     let likeButton = artCard.querySelector("#like-button")
     likeButton.addEventListener('click', (e) => likeArtwork(e, artwork)) 
 }
