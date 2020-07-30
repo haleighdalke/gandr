@@ -183,14 +183,13 @@ const viewComments = (e, artwork, user) => {
         artwork.comments.map (function(comment){
             let thisComment = document.createElement('ul')
             thisComment.className = "comment-list"
-            // debugger
             thisComment.innerText = `♥ ${comment.content}`
             commentDiv.appendChild(thisComment)
         })
         artCard.appendChild(commentDiv)
 
         let addCommentButton = document.createElement('button')
-        addCommentButton.innerHTML = "Add Comment"
+        addCommentButton.innerHTML = "My Comments"
         addCommentButton.className="btn btn-danger"
         addCommentButton.id="add-comment-button"
         artCard.appendChild(addCommentButton)
@@ -202,26 +201,37 @@ const viewComments = (e, artwork, user) => {
         closeButton.addEventListener('click', (e) => popUpCard.remove()) 
 }
 
-const showAddComment= (e, artwork, user) => {
+const showAddComment = (e, artwork, user) => {
     let commentDiv = document.querySelector('#comment-div')
     commentDiv.remove()
     let addCommentButton = document.querySelector('#add-comment-button')
     addCommentButton.remove()
+
+    let artCard = document.querySelector('#add-comment-art-card')
+
+    let myCommentsDiv = document.createElement('div')
+    let myCommentsHeader = document.createElement('h6')
+    myCommentsHeader.innerHTML = "My Comments"
+    artCard.appendChild(myCommentsHeader)
+
+    myCommentsDiv.id = "my-comments-div"
+    artwork.comments.map (function(comment) {
+        if (comment.user_id == user.id) {
+            let thisComment = document.createElement('ul')
+            thisComment.innerText = `♥ ${comment.content}`
+            myCommentsDiv.appendChild(thisComment)
+        }
+    })
+    artCard.appendChild(myCommentsDiv)
+
+
     let commentForm = document.createElement('div')
     commentForm.innerHTML = `
         <form id='comment-form'>
-        <input class="form-control input-lg" id="inputlg" type="text">
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <input type='submit' class="btn btn-danger" value='Post Comment'>
+        <input id="inputlg" type="text" placeholder="What would you like to say?">
+        <input type='submit' class="btn btn-danger" id: "post-comment-button" style="float: right" value='Post Comment'>
         </form>
     `
-    let artCard = document.querySelector('#add-comment-art-card')
     artCard.appendChild(commentForm)
     .addEventListener('submit', (e) => {
         e.preventDefault()
