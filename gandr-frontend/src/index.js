@@ -1,12 +1,3 @@
-
-
-// ** Nav item highlighted **
-// <li class="nav-item active">
-// <a class="nav-link" href="#">Home
-//   <span class="sr-only">(current)</span>
-// </a>
-// </li>
-
 document.addEventListener('DOMContentLoaded', (e) => {    
     
     let success = false
@@ -86,9 +77,24 @@ const login = () => {
 }
 
 const renderHomePage = (user) => {
+
+    // update page
     let homeDiv = document.getElementById("home")
     homeDiv.style.display = "block"
-    // get all artwork and render home page once loaded from database
+
+    let header = document.querySelector("header")
+    h1 = header.querySelector("h1")
+    h1.innerText = `Welcome to Gandr, ${user.username}!`
+
+    fetchAllArtworks(user)
+    
+    // once page has loaded completely, add navbar event listeners
+    navBarEventListeners(user)
+    
+}
+
+const fetchAllArtworks = (user) => {
+    // add artwork cards from DB
     fetch('http://localhost:3000/artworks')
     .then(res => res.json())
     .then(json => {
@@ -105,6 +111,97 @@ const renderHomePage = (user) => {
     })
 }
 
+const navBarEventListeners = (user) => {
+    let viewAll = document.getElementById("nav-item-view-all")
+    let myFavorited = document.getElementById("nav-item-my-favorited")
+    let myCommented = document.getElementById("nav-item-my-commented")
+    
+    viewAll.addEventListener('click', (e) => renderFilteredArt(e, user))
+    myFavorited.addEventListener('click', (e) => renderFilteredArt(e, user))
+    myCommented.addEventListener('click', (e) => renderFilteredArt(e, user))
+}
+
+const renderFilteredArt = (e, user) => {
+    e.preventDefault()
+
+    let command = e.target.innerText
+    let navUl = e.target.parentElement.parentElement
+    let allArtCardsDiv = document.getElementById("features")
+
+    allArtCardsDiv.innerHTML = ""
+    
+    if (command === "My Favorited"){
+        switchActiveNavLink(e.target.parentElement, navUl)
+       
+        fetch(`http://localhost:3000/likes`)
+        .then(res => res.json())
+        .then(json => {
+            let rendered = false
+            json.forEach(like => { 
+                if (like.user_id == user.id){
+                    fetch(`http://localhost:3000/artworks/${like.artwork_id}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        renderArtCard(json, user)
+                    })
+                    rendered = true
+                }
+            })
+            if (!rendered) {
+                updateJumbotron("Oops!", "Sorry, you don't have any favorites!")
+            }
+            else {
+                updateJumbotron("Your Favorites Collection", "Curated for you, by you!")
+            }
+        })
+
+    }
+    else if (command === "My Commented"){
+        switchActiveNavLink(e.target.parentElement, navUl)
+
+        fetch(`http://localhost:3000/comments`)
+        .then(res => res.json())
+        .then(json => {
+            let rendered = false
+            json.forEach(comment => { 
+                if (comment.user_id == user.id){
+                    fetch(`http://localhost:3000/artworks/${comment.artwork_id}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        renderArtCard(json, user)
+                    })
+                    rendered = true
+                }
+            })
+            if (!rendered) {
+                updateJumbotron("Oops!", "Sorry, you haven't made any comments yet!")
+            }
+            else {
+                updateJumbotron("Your Comments Collection", "Stay up to date with the art you're talking about!")
+            }
+        })
+    }
+    else {
+        updateJumbotron("Viewing All Artwork", "Like, view, and comment on your favorites!")
+        fetchAllArtworks(user)
+        switchActiveNavLink(e.target.parentElement, navUl)
+    }
+}
+
+const switchActiveNavLink = (myLi, navUl) => {
+    let allLi = navUl.querySelectorAll('li')
+    allLi.forEach(li => {
+        li.className = "nav-item"
+    })
+    myLi.className = "nav-item active"
+}
+
+const updateJumbotron = (header, subheader="") => {
+    let h1 = document.querySelector('header h1')
+    let p = document.querySelector('header p')
+    h1.innerText = header
+    p.innerText = subheader
+}
 
 const renderArtCard = (artwork, user) => {
     let div = document.getElementById("features")
@@ -117,7 +214,7 @@ const renderArtCard = (artwork, user) => {
         <img class="card-img-top" src="${artwork.artwork_image}" alt="">
         <div class="card-body">
             <h5 class="card-title">${artwork.artwork_title}</h5>
-            <p class="card-text">Created by ${artwork.artist_name}, ${artwork.artist_nationality}, in ${artwork.artwork_date}</p>
+            <p class="card-text">Created${artwork.artist_name == "" ? "" : ` by ${artwork.artist_name}`}${artwork.artist_nationality == "" ? "" : `, ${artwork.artist_nationality},`} in ${artwork.artwork_date}</p>
         </div>
         <div class="card-footer">
             <a href="#" class="btn btn-danger" id="like-button">♥ ${artwork.likes.length}</a>
