@@ -22,7 +22,7 @@ const login = () => {
     let loginForm = document.getElementById("login-form")
     loginForm.addEventListener('submit', (e) => {
         // validate username and transition
-        fetch('')
+        fetch('http://localhost:3000/users')
         .then(res => res.json())
         .then(json => {
             json.forEach(user => {
