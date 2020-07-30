@@ -169,6 +169,8 @@ button#add-comment-button.btn.btn-danger {
 
 #post-comment-button {
   height: 40px;
+}
+
 footer a:hover, a:active {
   color: white;
 }
