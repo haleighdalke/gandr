@@ -167,6 +167,30 @@ button#add-comment-button.btn.btn-danger {
   margin-left: 10px;
 }
 
+.edit-comment-button {
+  float: right;
+  height: 25px;
+  padding: 5px;
+  display: flex;
+  background-color: #DC3545;
+  border: 0px;
+  color: white;
+  border-radius: 4px;
+  line-height: 100%;
+}
+
+.delete-comment-button {
+  float: right;
+  height: 25px;
+  padding: 5px;
+  display: flex;
+  background-color: #007BFF;
+  border: 0px;
+  color: white;
+  border-radius: 4px;
+  line-height: 100%;
+}
+
 #post-comment-button {
   height: 40px;
 }
