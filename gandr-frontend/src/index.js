@@ -108,19 +108,23 @@ const likeArtwork = (e, artwork) => {
         })      
 }
 
-// const postComment = (e, artwork) => {
-//     let data = {
-//         artwork_id: artwork.id,
-//         // Need to identify user
-//         user_id: user.id
-//         // Add content
-//     }
-//     fetch(`http://localhost:3000/comments`,{
-//         method: 'POST',
-//         headers: {
-//         'Content-Type':'application/json',
-//         },
-//         body: JSON.stringify(data)
-//         })
-//         .then(res => res.json()) 
-// }
+const postComment = (e, artwork) => {
+    // debugger
+    // modal.classList.toggle("show-modal");
+
+
+    // let data = {
+    //     artwork_id: artwork.id,
+    //     // Need to identify user
+    //     user_id: user.id
+    //     // Add content
+    // }
+    // fetch(`http://localhost:3000/comments`,{
+    //     method: 'POST',
+    //     headers: {
+    //     'Content-Type':'application/json',
+    //     },
+    //     body: JSON.stringify(data)
+    //     })
+    //     .then(res => res.json()) 
+}
