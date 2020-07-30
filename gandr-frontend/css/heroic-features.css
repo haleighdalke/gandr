@@ -93,7 +93,7 @@ a.btn.btn-primary {
 }
 
 #main-content{
-  padding-top: 100px !important;
+  padding-top: 50px !important;
   overflow: visible;
   background-color: rgb(219, 219, 219) !important;;
 }
@@ -148,4 +148,13 @@ button#add-comment-button.btn.btn-danger {
 
 .container {
   height: 100%;
+}
+
+footer a:hover, a:active {
+  color: white;
+}
+
+footer a:visited {
+  color: inherit;
+  font-weight: bold;
 }
