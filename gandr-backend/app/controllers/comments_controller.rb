@@ -17,13 +17,21 @@ class CommentsController < ApplicationController
     def create
         comment = Comment.new(user_id: params["user_id"], artwork_id: params["artwork_id"], content: params["content"])
         if comment.save
-            ## what do we want to show?
             render json: CommentSerializer.new(comment).to_serialized_json
         else 
             flash[:message] = @comment.errors.full_messages
-            ## what do we want to show?
             render json: CommentSerializer.new(comment).to_serialized_json
         end
+    end
+
+    def edit 
+        comment = Comment.new
+    end
+
+    def update
+        comment = Comment.find_by(id: params[:id])
+        comment.update(user_id: params["user_id"], artwork_id: params["artwork_id"], content: params["content"])
+        render json: CommentSerializer.new(comment).to_serialized_json
     end
 
     def destroy
