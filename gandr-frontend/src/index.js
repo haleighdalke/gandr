@@ -1,12 +1,3 @@
-
-
-// ** Nav item highlighted **
-// <li class="nav-item active">
-// <a class="nav-link" href="#">Home
-//   <span class="sr-only">(current)</span>
-// </a>
-// </li>
-
 document.addEventListener('DOMContentLoaded', (e) => {    
     
     let success = false
@@ -86,9 +77,24 @@ const login = () => {
 }
 
 const renderHomePage = (user) => {
+
+    // update page
     let homeDiv = document.getElementById("home")
     homeDiv.style.display = "block"
-    // get all artwork and render home page once loaded from database
+
+    let header = document.querySelector("header")
+    h1 = header.querySelector("h1")
+    h1.innerText = `Welcome to Gandr, ${user.username}!`
+
+    fetchAllArtworks(user)
+    
+    // once page has loaded completely, add navbar event listeners
+    navBarEventListeners(user)
+    
+}
+
+const fetchAllArtworks = (user) => {
+    // add artwork cards from DB
     fetch('http://localhost:3000/artworks')
     .then(res => res.json())
     .then(json => {
@@ -105,6 +111,38 @@ const renderHomePage = (user) => {
     })
 }
 
+const navBarEventListeners = (user) => {
+    let viewAll = document.getElementById("nav-item-view-all")
+    let myFavorited = document.getElementById("nav-item-my-favorited")
+    let myCommented = document.getElementById("nav-item-my-commented")
+    
+    viewAll.addEventListener('click', (e) => renderFilteredArt(e, user))
+    myFavorited.addEventListener('click', (e) => renderFilteredArt(e, user))
+    myCommented.addEventListener('click', (e) => renderFilteredArt(e, user))
+}
+
+const renderFilteredArt = (e, user) => {
+    e.preventDefault()
+    let command = e.target.innerText
+
+    let navUl = e.target.parentElement.parentElement
+    navUl.querySelectorAll('li')
+    debugger
+    if (command === "My Favorited"){
+        //fetch by user likes
+    }
+    else if (command === "My Commented"){
+        //fetch by user comments
+    }
+    else {
+        fetchAllArtworks(user)
+        e.target.parentElement.class = "nav-item active"
+    }
+}
+
+const findActiveNavLink = () => {
+
+}
 
 const renderArtCard = (artwork, user) => {
     let div = document.getElementById("features")

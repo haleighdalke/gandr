@@ -5,7 +5,14 @@ class UserSerializer
     end
      
     def to_serialized_json
-        @user.to_json(:except => [:updated_at, :created_at])
+        options = {
+            include: {
+                likes: {},
+                comments: {}
+            },
+            except: [:updated_at, :created_at]
+        }
+        @user.to_json(options)
     end
 
 end
