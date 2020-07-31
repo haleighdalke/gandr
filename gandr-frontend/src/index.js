@@ -163,15 +163,17 @@ const renderFilteredArt = (e, user) => {
         .then(res => res.json())
         .then(json => {
             let rendered = false
-            json.forEach(comment => { 
-                if (comment.user_id == user.id){
-                    fetch(`http://localhost:3000/artworks/${comment.artwork_id}`)
-                    .then(res => res.json())
-                    .then(json => {
-                        renderArtCard(json, user)
-                    })
-                    rendered = true
-                }
+
+            let filteredComments = json.filter(comment => comment.user_id == user.id)
+            let filteredArtworkIds = [...new Set(filteredComments.map(comment => comment.artwork_id))]
+
+            filteredArtworkIds.forEach(id => { 
+                fetch(`http://localhost:3000/artworks/${id}`)
+                .then(res => res.json())
+                .then(json => {
+                    renderArtCard(json, user)
+                })
+                rendered = true
             })
             if (!rendered) {
                 updateJumbotron("Oops!", "Sorry, you haven't made any comments yet!")
