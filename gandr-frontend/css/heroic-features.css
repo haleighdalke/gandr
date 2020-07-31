@@ -95,10 +95,12 @@ div .card-footer {
 dialog.pop-up-card {
   height: 800px;
   width: 550px;
-  background-color: F8F9FA;
-  border: 0px solid;
+  border: 10px solid;
+  border-color: #F8F9FA;
   opacity: 0.9 !important;
   text-align:center;
+  border-radius: 4px;
+  position: fixed;
 }
 
 img.pop-up-img {
@@ -107,6 +109,7 @@ img.pop-up-img {
   vertical-align: middle;
   padding-top: 20px;
   padding-left: 40px;
+  border-radius: 4px;
 }
 
 div.pop-up-card {
@@ -200,4 +203,28 @@ footer a:visited {
 #close-button {
   font-size: 50px;
   float: right;
+  text-decoration-line: none;
+}
+
+#view-image-card {
+  height: 820px;
+  width: 570px;
+  /* border: 10px solid; */
+  border-color: #F8F9FA;
+  border-radius: 4px;
+  position: fixed;
+  vertical-align: center;
+}
+
+#view-image {
+  height: 780px;
+  width: 530px;
+}
+
+#view-close-button {
+  position: absolute;
+  top: -9px;
+  right: 10px;
+  font-size: 50px;
+  text-decoration-line: none;
 }
