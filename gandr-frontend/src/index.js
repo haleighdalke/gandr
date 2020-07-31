@@ -144,9 +144,9 @@ const renderFilteredArt = (navLi, user, command) => {
         renderFilteredComments(user)
     }
     else {
-        updateJumbotron("Viewing All Artwork", "Like, view, and comment on your favorites!")
-        fetchAllArtworks(user)
         switchActiveNavLink(navLi, navUl)
+        fetchAllArtworks(user)
+        updateJumbotron("Viewing All Artwork", "Like, view, and comment on your favorites!")
     }
 }
 
