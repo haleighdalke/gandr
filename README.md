@@ -2,7 +2,7 @@
 
 ## About
 
-gandr is a JavaScript Single Page Application, with a Rails backend which allows users to browse a range of beautiful artworks from the Metropolitan Museum of Art, and to add comments and likes to their favorites. gandr was created by Haleigh Dalke and Iona Brabender for their Mod 3 Project as part of Flatiron School's immersive Software Engineering Program.
+gandr is a JavaScript Single Page Application, with a Rails backend which allows users to browse a range of beautiful artworks from the Metropolitan Museum of Art, and to add comments and likes to their favorite pieces. gandr was created by Haleigh Dalke and Iona Brabender for their Mod 3 Project as part of Flatiron School's immersive Software Engineering Program.
 
 
 ## Installation
