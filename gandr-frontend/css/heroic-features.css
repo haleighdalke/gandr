@@ -50,6 +50,10 @@ div .card-img-top {
   opacity: 1;
 }
 
+#full-image:hover {
+  opacity: 0.8;
+}
+
 /* Card body dives that come immediately after the img tags */
 div.card-body + img.card-img-top {
   background-color: #FFFFFF;
