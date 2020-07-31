@@ -19,6 +19,8 @@ class LikesController < ApplicationController
 
     def create
         @like = Like.create(user_id: params["user_id"], artwork_id: params["artwork_id"])
+        # byebug
+        # Like.dedupe
         artworks = Artwork.all
         render json: ArtworkSerializer.new(artworks).to_serialized_json
     end

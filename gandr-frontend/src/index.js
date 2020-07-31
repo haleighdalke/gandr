@@ -211,7 +211,7 @@ const renderArtCard = (artwork, user) => {
     artCard.innerHTML = `
 
         <div class="card h-100">
-        <img class="card-img-top" src="${artwork.artwork_image}" alt="">
+        <img class="card-img-top" id="full-image" src="${artwork.artwork_image}" alt="">
         <div class="card-body">
             <h5 class="card-title">${artwork.artwork_title}</h5>
             <p class="card-text">Created${artwork.artist_name == "" ? "" : ` by ${artwork.artist_name}`}${artwork.artist_nationality == "" ? "" : `, ${artwork.artist_nationality},`} in ${artwork.artwork_date}</p>
@@ -224,6 +224,12 @@ const renderArtCard = (artwork, user) => {
 
     `
     div.appendChild(artCard)
+
+    let image = artCard.querySelector("#full-image")
+    image.addEventListener('click', (e) => {
+        e.preventDefault()
+        viewImage(e, artwork, user)
+    }) 
     
     let likeButton = artCard.querySelector("#like-button")
     likeButton.addEventListener('click', (e) => {
@@ -233,8 +239,8 @@ const renderArtCard = (artwork, user) => {
 
     let viewCommentsButton = artCard.querySelector("#view-comments-button")
     viewCommentsButton.addEventListener('click', (e) => {  
-    e.preventDefault()
-    viewComments(e, artwork, user)
+        e.preventDefault()
+        viewComments(e, artwork, user)
     })
 }
 
@@ -269,7 +275,7 @@ const viewComments = (e, artwork, user) => {
         artCard.innerHTML = `
         
         <div class="pop-up-card">
-            <a href="#" class="btn-default" id="close-button">☒ Close</a>
+            <a href="#" class="btn-default" id="close-button">☒</a>
             <div class="pop-up-img">
                 <img class="pop-up-img" src="${artwork.artwork_image}" alt="">
             </div>
@@ -302,6 +308,7 @@ const viewComments = (e, artwork, user) => {
         closeButton.addEventListener('click', (e) => {
             e.preventDefault()
             popUpCard.remove()
+            renderFilteredArt(e, user)
         }) 
 }
 
@@ -499,4 +506,21 @@ const deleteComment = (e, artwork, user) => {
         let thisComment = document.getElementById(`${comment_id}`)
         thisComment.remove()
     })
+}
+
+const viewImage = (e, artwork, user) => {
+    let viewImageCard = document.createElement("dialog");
+    viewImageCard.id = "view-image-card"
+    document.body.appendChild(viewImageCard)
+    viewImageCard.showModal();
+
+    viewImageCard.innerHTML = `
+    <a href="#" class="btn-default" id="view-close-button">☒</a>
+    <img class="view-image-card" id="view-image" src="${artwork.artwork_image}" alt=""></img>`
+
+    let viewCloseButton = document.querySelector("#view-close-button")
+    viewCloseButton.addEventListener('click', (e) => {
+        e.preventDefault()
+        viewImageCard.remove()
+    }) 
 }
