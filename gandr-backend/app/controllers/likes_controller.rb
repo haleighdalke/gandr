@@ -18,11 +18,12 @@ class LikesController < ApplicationController
     end
 
     def create
-        @like = Like.create(user_id: params["user_id"], artwork_id: params["artwork_id"])
+        like = Like.create(user_id: params["user_id"], artwork_id: params["artwork_id"])
         # byebug
-        # Like.dedupe
-        artworks = Artwork.all
-        render json: ArtworkSerializer.new(artworks).to_serialized_json
+        Like.dedupe
+        # artworks = Artwork.all
+        # changed return value to the json like instance
+        render json: LikeSerializer.new(like).to_serialized_json
     end
 
     def destroy

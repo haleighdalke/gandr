@@ -249,7 +249,25 @@ const likeArtwork = (e, artwork, user) => {
         artwork_id: artwork.id,
         user_id: user.id
     }
-    updatedLikes = artwork.likes.length +=1
+
+    // If like exists, delete. Otherwise, add.
+    fetch(`http://localhost:3000/likes`)
+    .then(res => res.json())
+    .then(json => {
+        let match = json.find(like => {
+            return like.user_id == user.id && like.artwork_id == artwork.id
+        })
+        if (match) {
+            destroyLike(match, artwork, user)
+        }
+        else {
+            postLike(data, artwork, user)
+        }
+    })
+    
+}
+
+const postLike = (data, artwork, user) => {
     fetch(`http://localhost:3000/likes`,{
         method: 'POST',
         headers: {
@@ -257,12 +275,42 @@ const likeArtwork = (e, artwork, user) => {
         },
         body: JSON.stringify(data)
         })
-        .then(res => {
+        .then(res => res.json())
+        .then(json => {
+            let updatedLikes = artwork.likes.length +=1
             let artCard = document.getElementById(`${artwork.artwork_met_id}`)
             let likeButton = artCard.querySelector("#like-button")
             likeButton.innerHTML = `♥ ${updatedLikes}`
         })      
 }
+
+const destroyLike = (like, artwork, user) => {
+    fetch(`http://localhost:3000/likes/${like.id}`, {
+        method: "DELETE"
+    })
+    .then(res => res.json())
+    .then(json => {
+        debugger
+        let updatedLikes = artwork.likes.length -=1
+        let artCard = document.getElementById(`${artwork.artwork_met_id}`)
+        let likeButton = artCard.querySelector("#like-button")
+        likeButton.innerHTML = `♥ ${updatedLikes}`
+        // renderLike(json, artwork, user, 'delete')
+    })
+}
+
+// const renderLike = (like, artwork, user, method) => {
+//     let updatedLikes = artwork.likes.length
+//     if (method === 'delete'){
+//         updatedLikes -= 1
+//     }
+//     else {
+//         updatedLikes += 1
+//     }
+//     let artCard = document.getElementById(`${artwork.artwork_met_id}`)
+//     let likeButton = artCard.querySelector("#like-button")
+//     likeButton.innerHTML = `♥ ${updatedLikes}`
+// }
 
 const viewComments = (e, artwork, user) => {
         let popUpCard = document.createElement("dialog");
