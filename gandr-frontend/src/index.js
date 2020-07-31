@@ -254,15 +254,8 @@ const likeArtwork = (e, artwork, user) => {
     fetch(`http://localhost:3000/likes`)
     .then(res => res.json())
     .then(json => {
-        let match = json.find(like => {
-            return like.user_id == user.id && like.artwork_id == artwork.id
-        })
-        if (match) {
-            destroyLike(match, artwork, user)
-        }
-        else {
-            postLike(data, artwork, user)
-        }
+        let match = json.find(like => like.user_id == user.id && like.artwork_id == artwork.id)
+        match ? destroyLike(match, artwork, user) : postLike(data, artwork, user)
     })
     
 }
@@ -271,7 +264,7 @@ const postLike = (data, artwork, user) => {
     fetch(`http://localhost:3000/likes`,{
         method: 'POST',
         headers: {
-        'Content-Type':'application/json',
+            'Content-Type':'application/json',
         },
         body: JSON.stringify(data)
         })
@@ -354,6 +347,7 @@ const viewComments = (e, artwork, user) => {
         closeButton.addEventListener('click', (e) => {
             e.preventDefault()
             popUpCard.remove()
+            // make edits HERE
             renderFilteredArt(e, user)
         }) 
 }
