@@ -66,16 +66,6 @@ div .card-footer {
   background-color: #F8F9FA;	
 }
 
-a.btn.btn-danger {
-  background-color: #ff9999;
-  border-color: #ff9999;
-}
-
-a.btn.btn-primary {
-  background-color: #66a3ff;
-  border-color: #66a3ff;
-}
-
 #logo {
   height: 70px;
 }
@@ -115,6 +105,8 @@ img.pop-up-img {
   height: 400px;
   width: 300px;
   vertical-align: middle;
+  padding-top: 20px;
+  padding-left: 40px;
 }
 
 div.pop-up-card {
@@ -177,6 +169,7 @@ button#add-comment-button.btn.btn-danger {
   color: white;
   border-radius: 4px;
   line-height: 100%;
+  margin-right: 5px;
 }
 
 .delete-comment-button {
@@ -202,4 +195,9 @@ footer a:hover, a:active {
 footer a:visited {
   color: inherit;
   font-weight: bold;
+}
+
+#close-button {
+  font-size: 50px;
+  float: right;
 }

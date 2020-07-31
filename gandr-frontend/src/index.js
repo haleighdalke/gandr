@@ -233,8 +233,8 @@ const renderArtCard = (artwork, user) => {
 
     let viewCommentsButton = artCard.querySelector("#view-comments-button")
     viewCommentsButton.addEventListener('click', (e) => {  
-    e.preventDefault()
-    viewComments(e, artwork, user)
+        e.preventDefault()
+        viewComments(e, artwork, user)
     })
 }
 
@@ -269,7 +269,7 @@ const viewComments = (e, artwork, user) => {
         artCard.innerHTML = `
         
         <div class="pop-up-card">
-            <a href="#" class="btn-default" id="close-button">☒ Close</a>
+            <a href="#" class="btn-default" id="close-button">☒</a>
             <div class="pop-up-img">
                 <img class="pop-up-img" src="${artwork.artwork_image}" alt="">
             </div>
@@ -302,6 +302,7 @@ const viewComments = (e, artwork, user) => {
         closeButton.addEventListener('click', (e) => {
             e.preventDefault()
             popUpCard.remove()
+            renderFilteredArt(e, user)
         }) 
 }
 
