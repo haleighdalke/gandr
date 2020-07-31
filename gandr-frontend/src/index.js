@@ -218,7 +218,7 @@ const renderArtCard = (artwork, user) => {
         </div>
         <div class="card-footer">
             <a href="#" class="btn btn-danger" id="like-button">♥ ${artwork.likes.length}</a>
-            <a href="#" class="btn btn-primary" id="view-comments-button">View</a>
+            <a href="#" class="btn btn-primary" id="view-comments-button">View Comments</a>
         </div>
         </div>
 
@@ -290,7 +290,7 @@ const destroyLike = (like, artwork, user) => {
     })
     .then(res => res.json())
     .then(json => {
-        debugger
+        // debugger
         let updatedLikes = artwork.likes.length -=1
         let artCard = document.getElementById(`${artwork.artwork_met_id}`)
         let likeButton = artCard.querySelector("#like-button")
@@ -321,9 +321,8 @@ const viewComments = (e, artwork, user) => {
         let artCard = document.createElement("card")
         artCard.id = "add-comment-art-card"
         artCard.innerHTML = `
-        
+        <a href="#" class="btn-default" id="close-button">☒</a>
         <div class="pop-up-card">
-            <a href="#" class="btn-default" id="close-button">☒</a>
             <div class="pop-up-img">
                 <img class="pop-up-img" src="${artwork.artwork_image}" alt="">
             </div>
@@ -332,6 +331,8 @@ const viewComments = (e, artwork, user) => {
             </div>
         </div>
         `
+
+        // This was in artCard.innerHTML: <a href="#" class="btn-default" id="close-button">☒</a>
 
         let commentDiv = document.createElement('div')
         commentDiv.id = "comment-div"
@@ -357,7 +358,16 @@ const viewComments = (e, artwork, user) => {
             e.preventDefault()
             popUpCard.remove()
             renderFilteredArt(e, user)
-        }) 
+        })
+
+        // popUpCard.addEventListener('click', (e) => {
+        //     if (e.target == popUpCard) {
+        //         e.preventDefault()
+        //         popUpCard.remove()
+        //         // debugger
+        //         renderFilteredArt(e, user)
+        //     } 
+        // })
 }
 
 const showAddComment = (e, artwork, user) => {
@@ -563,12 +573,21 @@ const viewImage = (e, artwork, user) => {
     viewImageCard.showModal();
 
     viewImageCard.innerHTML = `
-    <a href="#" class="btn-default" id="view-close-button">☒</a>
+    
     <img class="view-image-card" id="view-image" src="${artwork.artwork_image}" alt=""></img>`
 
-    let viewCloseButton = document.querySelector("#view-close-button")
-    viewCloseButton.addEventListener('click', (e) => {
-        e.preventDefault()
-        viewImageCard.remove()
-    }) 
+    // This was in viewImageCard.innerHTML: <a href="#" class="btn-default" id="view-close-button">☒</a>
+
+    // let viewCloseButton = document.querySelector("#view-close-button")
+    // viewCloseButton.addEventListener('click', (e) => {
+    //     e.preventDefault()
+    //     viewImageCard.remove()
+    // }) 
+
+    viewImageCard.addEventListener('click', (e) => {
+        if (e.target == viewImageCard) {
+            e.preventDefault()
+            viewImageCard.remove()
+        } 
+    })
 }
