@@ -281,6 +281,10 @@ const destroyLike = (like, artwork, user) => {
     })
     .then(res => res.json())
     .then(json => {
+<<<<<<< HEAD
+        // debugger
+=======
+>>>>>>> c999ff588cb3e9bafbc9feb9eea9ccfc726035a3
         let updatedLikes = artwork.likes.length -=1
         renderLike(updatedLikes, artwork)
     })
