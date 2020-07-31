@@ -116,86 +116,102 @@ const navBarEventListeners = (user) => {
     let myFavorited = document.getElementById("nav-item-my-favorited")
     let myCommented = document.getElementById("nav-item-my-commented")
     
-    viewAll.addEventListener('click', (e) => renderFilteredArt(e, user))
-    myFavorited.addEventListener('click', (e) => renderFilteredArt(e, user))
-    myCommented.addEventListener('click', (e) => renderFilteredArt(e, user))
+    viewAll.addEventListener('click', (e) => {
+        e.preventDefault()
+        renderFilteredArt(e.target.parentElement, user, "View All")
+    })
+    myFavorited.addEventListener('click', (e) => {
+        e.preventDefault()
+        renderFilteredArt(e.target.parentElement, user, "My Favorited")
+    })
+    myCommented.addEventListener('click', (e) => {
+        e.preventDefault()
+        renderFilteredArt(e.target.parentElement, user, "My Commented")
+    })
 }
 
-const renderFilteredArt = (e, user) => {
-    e.preventDefault()
-
-    let command = e.target.innerText
-    let navUl = e.target.parentElement.parentElement
+const renderFilteredArt = (navLi, user, command) => {
+    let navUl = document.querySelector("nav ul")
     let allArtCardsDiv = document.getElementById("features")
-
     allArtCardsDiv.innerHTML = ""
     
     if (command === "My Favorited"){
-        switchActiveNavLink(e.target.parentElement, navUl)
-       
-        fetch(`http://localhost:3000/likes`)
-        .then(res => res.json())
-        .then(json => {
-            let rendered = false
-            json.forEach(like => { 
-                if (like.user_id == user.id){
-                    fetch(`http://localhost:3000/artworks/${like.artwork_id}`)
-                    .then(res => res.json())
-                    .then(json => {
-                        renderArtCard(json, user)
-                    })
-                    rendered = true
-                }
-            })
-            if (!rendered) {
-                updateJumbotron("Oops!", "Sorry, you don't have any favorites!")
-            }
-            else {
-                updateJumbotron("Your Favorites Collection", "Curated for you, by you!")
-            }
-        })
-
+        switchActiveNavLink(navLi, navUl)
+        renderFilteredFavorites(user)
     }
     else if (command === "My Commented"){
-        switchActiveNavLink(e.target.parentElement, navUl)
+        switchActiveNavLink(navLi, navUl)
+        renderFilteredComments(user)
+    }
+    else {
+        updateJumbotron("Viewing All Artwork", "Like, view, and comment on your favorites!")
+        fetchAllArtworks(user)
+        switchActiveNavLink(navLi, navUl)
+    }
+}
 
-        fetch(`http://localhost:3000/comments`)
-        .then(res => res.json())
-        .then(json => {
-            let rendered = false
-
-            let filteredComments = json.filter(comment => comment.user_id == user.id)
-            let filteredArtworkIds = [...new Set(filteredComments.map(comment => comment.artwork_id))]
-
-            filteredArtworkIds.forEach(id => { 
-                fetch(`http://localhost:3000/artworks/${id}`)
+const renderFilteredFavorites = (user) => {
+    let allArtCardsDiv = document.getElementById("features")
+    allArtCardsDiv.innerHTML = ""
+    fetch(`http://localhost:3000/likes`)
+    .then(res => res.json())
+    .then(json => {
+        let rendered = false
+        json.forEach(like => { 
+            if (like.user_id == user.id){
+                fetch(`http://localhost:3000/artworks/${like.artwork_id}`)
                 .then(res => res.json())
                 .then(json => {
                     renderArtCard(json, user)
                 })
                 rendered = true
-            })
-            if (!rendered) {
-                updateJumbotron("Oops!", "Sorry, you haven't made any comments yet!")
-            }
-            else {
-                updateJumbotron("Your Comments Collection", "Stay up to date with the art you're talking about!")
             }
         })
-    }
-    else {
-        updateJumbotron("Viewing All Artwork", "Like, view, and comment on your favorites!")
-        fetchAllArtworks(user)
-        switchActiveNavLink(e.target.parentElement, navUl)
-    }
+        if (!rendered) {
+            updateJumbotron("Oops!", "Sorry, you don't have any favorites!")
+        }
+        else {
+            updateJumbotron("Your Favorites Collection", "Curated for you, by you!")
+        }
+    })
+}
+
+const renderFilteredComments = (user) => {
+    let allArtCardsDiv = document.getElementById("features")
+    allArtCardsDiv.innerHTML = ""
+    fetch(`http://localhost:3000/comments`)
+    .then(res => res.json())
+    .then(json => {
+        let rendered = false
+
+        let filteredComments = json.filter(comment => comment.user_id == user.id)
+        let filteredArtworkIds = [...new Set(filteredComments.map(comment => comment.artwork_id))]
+
+        filteredArtworkIds.forEach(id => { 
+            fetch(`http://localhost:3000/artworks/${id}`)
+            .then(res => res.json())
+            .then(json => {
+                renderArtCard(json, user)
+            })
+            rendered = true
+        })
+        if (!rendered) {
+            updateJumbotron("Oops!", "Sorry, you haven't made any comments yet!")
+        }
+        else {
+            updateJumbotron("Your Comments Collection", "Stay up to date with the art you're talking about!")
+        }
+    })
 }
 
 const switchActiveNavLink = (myLi, navUl) => {
     let allLi = navUl.querySelectorAll('li')
     allLi.forEach(li => {
         li.className = "nav-item"
+        li.id = ''
     })
     myLi.className = "nav-item active"
+    myLi.id = "current-page"
 }
 
 const updateJumbotron = (header, subheader="") => {
@@ -290,10 +306,10 @@ const destroyLike = (like, artwork, user) => {
 
 const renderLike = (updatedLikes, artwork) => {
     // check what page you're on to determine how to render
-    let currentPage = document.querySelector("li#nav-item-my-favorited")
-    let artCard = document.getElementById(`${artwork.artwork_met_id}`)
+    let currentPage = document.getElementById('current-page').innerText
 
-    if (currentPage.className === "nav-item active"){
+    let artCard = document.getElementById(`${artwork.artwork_met_id}`)
+    if (currentPage === "My Favorited"){
         artCard.remove()
         // If this is the last card, update jumbotron
         let div = document.getElementById("features")
@@ -350,7 +366,19 @@ const viewComments = (e, artwork, user) => {
             e.preventDefault()
             popUpCard.remove()
             // make edits HERE
-            renderFilteredArt(e, user)
+
+            // decide what to do based on current page
+            let currentPage = document.getElementById('current-page').innerText
+            if (currentPage == "My Commented"){
+                renderFilteredComments(user)
+            }
+            else if (currentPage == "My Favorited") {
+                renderFilteredFavorites(user)
+            }
+            else if (currentPage == "View All"){
+                // change e to navLi
+                renderFilteredArt(e, user, "View All")
+            }
         }) 
 }
 
