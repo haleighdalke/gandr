@@ -276,11 +276,9 @@ const postLike = (data, artwork, user) => {
         body: JSON.stringify(data)
         })
         .then(res => res.json())
-        .then(json => {
+        .then(json => {     
             let updatedLikes = artwork.likes.length +=1
-            let artCard = document.getElementById(`${artwork.artwork_met_id}`)
-            let likeButton = artCard.querySelector("#like-button")
-            likeButton.innerHTML = `♥ ${updatedLikes}`
+            renderLike(updatedLikes, artwork)
         })      
 }
 
@@ -290,27 +288,27 @@ const destroyLike = (like, artwork, user) => {
     })
     .then(res => res.json())
     .then(json => {
-        debugger
         let updatedLikes = artwork.likes.length -=1
-        let artCard = document.getElementById(`${artwork.artwork_met_id}`)
-        let likeButton = artCard.querySelector("#like-button")
-        likeButton.innerHTML = `♥ ${updatedLikes}`
-        // renderLike(json, artwork, user, 'delete')
+        renderLike(updatedLikes, artwork)
     })
 }
 
-// const renderLike = (like, artwork, user, method) => {
-//     let updatedLikes = artwork.likes.length
-//     if (method === 'delete'){
-//         updatedLikes -= 1
-//     }
-//     else {
-//         updatedLikes += 1
-//     }
-//     let artCard = document.getElementById(`${artwork.artwork_met_id}`)
-//     let likeButton = artCard.querySelector("#like-button")
-//     likeButton.innerHTML = `♥ ${updatedLikes}`
-// }
+const renderLike = (updatedLikes, artwork) => {
+    // check what page you're on to determine how to render
+    let currentPage = document.querySelector("li#nav-item-my-favorited")
+    let artCard = document.getElementById(`${artwork.artwork_met_id}`)
+
+    if (currentPage.className === "nav-item active"){
+        artCard.remove()
+        // If this is the last card, update jumbotron
+        let div = document.getElementById("features")
+        div.innerText === "" ? updateJumbotron("Oops!", "Sorry, you don't have any favorites!") : false
+    }
+    else{
+        let likeButton = artCard.querySelector("#like-button")
+        likeButton.innerHTML = `♥ ${updatedLikes}`
+    }
+}
 
 const viewComments = (e, artwork, user) => {
         let popUpCard = document.createElement("dialog");
