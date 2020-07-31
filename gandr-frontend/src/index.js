@@ -272,8 +272,15 @@ const likeArtwork = (e, artwork, user) => {
     fetch(`http://localhost:3000/likes`)
     .then(res => res.json())
     .then(json => {
-        let match = json.find(like => like.user_id == user.id && like.artwork_id == artwork.id)
-        match ? destroyLike(match, artwork, user) : postLike(data, artwork, user)
+        let match = json.find(like => {
+            return like.user_id == user.id && like.artwork_id == artwork.id
+        })
+        if (match) {
+            destroyLike(match, artwork, user)
+        }
+        else {
+            postLike(data, artwork, user)
+        }
     })
     
 }
@@ -282,14 +289,16 @@ const postLike = (data, artwork, user) => {
     fetch(`http://localhost:3000/likes`,{
         method: 'POST',
         headers: {
-            'Content-Type':'application/json',
+        'Content-Type':'application/json',
         },
         body: JSON.stringify(data)
         })
         .then(res => res.json())
-        .then(json => {     
+        .then(json => {
             let updatedLikes = artwork.likes.length +=1
-            renderLike(updatedLikes, artwork)
+            let artCard = document.getElementById(`${artwork.artwork_met_id}`)
+            let likeButton = artCard.querySelector("#like-button")
+            likeButton.innerHTML = `♥ ${updatedLikes}`
         })      
 }
 
@@ -299,7 +308,11 @@ const destroyLike = (like, artwork, user) => {
     })
     .then(res => res.json())
     .then(json => {
+        // debugger
         let updatedLikes = artwork.likes.length -=1
+<<<<<<< HEAD
+        let artCard = document.getElementById(`${artwork.artwork_met_id}`)
+=======
         renderLike(updatedLikes, artwork)
     })
 }
@@ -316,10 +329,25 @@ const renderLike = (updatedLikes, artwork) => {
         div.innerText === "" ? updateJumbotron("Oops!", "Sorry, you don't have any favorites!") : false
     }
     else{
+>>>>>>> 1d6b253de0e3dc814dccc919c6bef0d1187b08e3
         let likeButton = artCard.querySelector("#like-button")
         likeButton.innerHTML = `♥ ${updatedLikes}`
-    }
+        // renderLike(json, artwork, user, 'delete')
+    })
 }
+
+// const renderLike = (like, artwork, user, method) => {
+//     let updatedLikes = artwork.likes.length
+//     if (method === 'delete'){
+//         updatedLikes -= 1
+//     }
+//     else {
+//         updatedLikes += 1
+//     }
+//     let artCard = document.getElementById(`${artwork.artwork_met_id}`)
+//     let likeButton = artCard.querySelector("#like-button")
+//     likeButton.innerHTML = `♥ ${updatedLikes}`
+// }
 
 const viewComments = (e, artwork, user) => {
         let popUpCard = document.createElement("dialog");
@@ -330,8 +358,9 @@ const viewComments = (e, artwork, user) => {
         let artCard = document.createElement("card")
         artCard.id = "add-comment-art-card"
         artCard.innerHTML = `
-        <a href="#" class="btn-default" id="close-button">☒</a>
+        
         <div class="pop-up-card">
+            <a href="#" class="btn-default" id="close-button">☒</a>
             <div class="pop-up-img">
                 <img class="pop-up-img" src="${artwork.artwork_image}" alt="">
             </div>
@@ -340,8 +369,6 @@ const viewComments = (e, artwork, user) => {
             </div>
         </div>
         `
-
-        // This was in artCard.innerHTML: <a href="#" class="btn-default" id="close-button">☒</a>
 
         let commentDiv = document.createElement('div')
         commentDiv.id = "comment-div"
@@ -381,15 +408,6 @@ const viewComments = (e, artwork, user) => {
                 renderFilteredArt(e, user, "View All")
             }
         })
-
-        // popUpCard.addEventListener('click', (e) => {
-        //     if (e.target == popUpCard) {
-        //         e.preventDefault()
-        //         popUpCard.remove()
-        //         // debugger
-        //         renderFilteredArt(e, user)
-        //     } 
-        // })
 }
 
 const showAddComment = (e, artwork, user) => {
